@@ -90,4 +90,3 @@ class ATGM336H_5N_GPS():
                 print("longitude: %s %s",self.longitude,self.E_W)
             else:
                 print("GPS data is not usefull!")
-                lcd.draw_string(100,180,"GPS data is not usefull!",lcd.RED,lcd.BLACK)
