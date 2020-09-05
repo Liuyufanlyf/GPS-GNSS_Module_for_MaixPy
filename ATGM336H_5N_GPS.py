@@ -14,8 +14,9 @@ class ATGM336H_5N_GPS():
         self.N_S = ""
         self.longitude = ""
         self.E_W = ""
-        self.speed_to_groud = 0
-        self.course_over_ground = 0
+        self.speed_to_groud = ""
+        self.speed_to_groud_kh = ""
+        self.course_over_ground = ""
         self.date = ""
         self.DataIsUseful = False
 
@@ -27,7 +28,14 @@ class ATGM336H_5N_GPS():
         self.GPS_RX_Buffer = self.__uart_port.read(600)
         while self.GPS_RX_Buffer==None:
             self.GPS_RX_Buffer = self.__uart_port.read(600)
-        self.GPS_Buffer = self.GPS_RX_Buffer.decode('ASCII')
+
+        print("This is GPS_RX_Buffer, origin data from uart:")
+        print(self.GPS_RX_Buffer)
+
+        if self.GPS_RX_Buffer != None:
+            self.GPS_Buffer = self.GPS_RX_Buffer.decode('ASCII')
+        else:
+            print("eRROR:%s",self.GPS_RX_Buffer)
 
         # 测试模块工作是否正常的代码，实际应用请注释掉以避免输出信息过多
         #print("This is GPS_RX_Buffer, origin data from uart:")
@@ -59,7 +67,7 @@ class ATGM336H_5N_GPS():
     def GPS_Parese(self):
         if(self.isGetData == True):
             self.isGetData= False
-            print("************")
+            print("*****************************************")
 
         temp = self.GPS_Buffer.split(',')
 
@@ -68,25 +76,43 @@ class ATGM336H_5N_GPS():
             self.DataIsUseful = True
         else:
             self.DataIsUseful = False
+
         self.UTC_Time = temp[1]
         self.UTC_Time = self.UTC_Time[0:1]+':'+self.UTC_Time[2:3]+':'+self.UTC_Time[4:]
+
         self.latitude = temp[3]
         self.latitude = self.latitude[0:1]+'°'+self.latitude[2:]
+
         self.N_S = temp[4]
+
         self.longitude = temp[5]
         self.longitude = self.longitude[0:2]+'°'+self.latitude[2:]
+
         self.E_W = temp[6]
+        
+        # RMC 中的速度以节为单位
         self.speed_to_groud = temp[7]
+        if self.speed_to_groud != "":
+            self.speed_to_groud_kh = int(self.speed_to_groud)*1.852
+
         self.course_over_ground = temp[8]
+        if self.course_over_ground != ""
+            self.course_over_ground = int(self.course_over_ground)
+
         self.date = temp[9]
+        self.date = self.date[4:5]+'.'+self.date[2:3]+'.'+self.date[0:1]
+
         self.isParseData = True
 
     def print_GPS_info(self):
         if(self.isParseData):
             self.isParseData = False
             if(self.DataIsUseful):
-                print("UTC_Time: %s",self.UTC_Time)
                 print("latitude: %s %s",self.latitude,self.N_S)
                 print("longitude: %s %s",self.longitude,self.E_W)
+                print("Date: %s",self.date,end=' ')
+                print("UTC_Time: %s",self.UTC_Time)
+                print("speed: %f km/h",self.speed_to_groud_kh)
+                print("course_over_groud: %f°",self.course_over_ground)
             else:
                 print("GPS data is not usefull!")
