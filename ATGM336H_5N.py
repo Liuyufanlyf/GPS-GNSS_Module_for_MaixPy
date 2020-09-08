@@ -20,10 +20,6 @@ class ATGM336H_5N():
         self.isParseData = False
         self.DataIsUseful = False
 
-    def errorLog(self,num):
-        while(True):
-            print("ERROR %d\r\n",num)
-
     def GNSS_Read(self):
         self.GNSS_RX_Buffer = self.__uart_port.read(1200)
         while type(self.GNSS_RX_Buffer)!=bytes:

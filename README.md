@@ -21,9 +21,11 @@ lcd.init()
 # 创建卫星定位模块使用的串口对象
 fm.register(15,fm.fpioa.UART1_TX,force=True)
 fm.register(17,fm.fpioa.UART1_RX,force=True)
-uart1 = UART(UART.UART1, 9600,8,0,0,timeout=1000,read_buf_len=4096)
+uart1 = UART(UART.UART1, 9600,8,0,0,timeout=1000,read_buf_len=2048)
 
 GNSS = ATGM336H_5N(uart1)
+
+utime.sleep_ms(900)
 
 while True:
     # 读取、解码、在 LCD 上显示并通过串口打印获取的定位信息
@@ -62,8 +64,18 @@ while True:
 | speed_to_groud     | 对地速度（节）                                  |
 | speed_to_groud_kh  | 对地速度（千米每小时）                          |
 | course_over_ground | 方向角，与真北方向的夹角                        |
+| isDecodeData       | 是否解码完成                                    |
+| isParseData        | 是否解析完成                                    |
+| DataIsUseful       | 数据是否被使用过                                |
 
 
 
 ## 对象方法
+
+| 方法名                    | 含义         | 参数           |
+| ------------------------- | ------------ | -------------- |
+| \__init__(self,uart_port) | 初始化       | 使用的串口对象 |
+| GNSS_Read(self)           | 读取信息     |                |
+| GNSS_Parese(self)         | 解析信息     |                |
+| print_GNSS_info(self)     | 串口打印信息 |                |
 
