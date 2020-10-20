@@ -1,47 +1,12 @@
-# MaixPy_ATGM336H_5N_Module
-这是一个适用于 ATGM336H-5N 卫星定位模块的 MaixPy 库
+# GPS(GNSS)_Module_for_MaixPy
 
-This is a MaixPy library of ATGM336H, which can be use in MAIX development kit.
+本项目是一个 [MaixPy]() 库，适用于输出格式符合 CASIC 多模卫星导航接收机协议规范的全球定位系统模组。对特定型号可能有所差别，目前验证了 ATGM336H-5N 模组和合宙 Air530 模组。
 
-ATGM336H-5N 是中科微基于其研发的 AT6558 GNSS Soc 开发的卫星定位模块，支持六种卫星导航系统，具有高灵敏度、低功耗、低成本的特点。本库封装了模块信息的处理功能，使用户可通过对象成员访问操作获取时间、经纬度、速度、航向等信息。
+ATGM336H-5N 是中科微基于其研发的 AT6558 GNSS Soc 开发的卫星定位模块，支持六种卫星导航系统，具有高灵敏度、低功耗、低成本的特点。
 
-## Example
+合宙 Air530 模块是一款高性能、高集成度的多模卫星定位导航模块。体积小、功耗低，可用于车载导航、智能穿戴、无人机等 GNSS 定位的应用中。很遗憾的是，该模组目前已停产。
 
-本示例在 MAIX GO 开发板上验证通过
-
-```python
-from fpioa_manager import fm
-from machine import UART
-from board import board_info
-import utime, lcd
-from ATGM336H_5N import ATGM336H_5N
-
-lcd.init()
-
-# 创建卫星定位模块使用的串口对象
-fm.register(15,fm.fpioa.UART1_TX,force=True)
-fm.register(17,fm.fpioa.UART1_RX,force=True)
-uart1 = UART(UART.UART1, 9600,8,0,0,timeout=1000,read_buf_len=2048)
-
-GNSS = ATGM336H_5N(uart1)
-
-utime.sleep_ms(900)
-
-while True:
-    # 读取、解码、在 LCD 上显示并通过串口打印获取的定位信息
-    GNSS.GNSS_Read()
-    GNSS.GNSS_Parese()
-    lcd.clear(lcd.WHITE)
-    lcd.draw_string(10,40,"Date: "+GNSS.date,lcd.BLACK,lcd.WHITE)
-    lcd.draw_string(10,60,"UTC Time: "+GNSS.UTC_Time,lcd.BLACK,lcd.WHITE)
-    lcd.draw_string(10,80,"latitude: "+GNSS.latitude+GNSS.N_S,lcd.BLACK,lcd.WHITE)
-    lcd.draw_string(10,100,"longitude: "+GNSS.longitude+GNSS.E_W,lcd.BLACK,lcd.WHITE)
-    lcd.draw_string(10,120,"Speed: "+str(GNSS.speed_to_groud_kh),lcd.BLACK,lcd.WHITE)
-    lcd.draw_string(10,140,"Course_over_ground: "+str(GNSS.course_over_ground),lcd.BLACK,lcd.WHITE)
-    GNSS.print_GNSS_info()
-    utime.sleep(5)
-
-```
+本库封装了模块信息的处理功能，使用户可通过对象成员访问操作获取时间、经纬度、速度、航向等信息。
 
 ## 已知的局限
 
